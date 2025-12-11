@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Tovar chiqarish - Erax Sklad</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themes.css') }}">
+</head>
+<body>
+    <div id="sidebar-placeholder"></div>
+
+    <div class="main-content">
+        <header>
+            <h1 data-uz="Tovar chiqarish" data-ru="Убрать товар">Tovar chiqarish</h1>
+        </header>
+
+        <div class="products-list">
+            <table id="products-table">
+                <thead>
+                    <tr>
+                        <th data-uz="Nomi" data-ru="Название">Nomi</th>
+                        <th data-uz="Quti" data-ru="Коробок">Quti</th>
+                        <th data-uz="Dona" data-ru="Штук">Dona</th>
+                        <th data-uz="Narxi" data-ru="Цена">Narxi</th>
+                        <th data-uz="Amal" data-ru="Действие">Amal</th>
+                    </tr>
+                </thead>
+                <tbody id="products-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="remove-modal" class="modal">
+        <div class="modal-content">
+            <h3 data-uz="Tovar chiqarish" data-ru="Убрать товар">Tovar chiqarish</h3>
+            <p><span data-uz="Tovar:" data-ru="Товар:">Tovar:</span> <strong id="modal-product-name"></strong></p>
+            <p><span data-uz="Mavjud:" data-ru="Доступно:">Mavjud:</span> <strong id="modal-product-qty"></strong></p>
+            <input type="number" id="remove-boxes" data-uz-placeholder="Quti soni" data-ru-placeholder="Количество коробок" placeholder="Quti soni" min="0">
+            <input type="number" step="0.01" id="remove-sell-price" data-uz-placeholder="Sotish narxi (dona)" data-ru-placeholder="Цена продажи (шт)" placeholder="Sotish narxi (dona)" required>
+            <div class="modal-actions">
+                <button onclick="confirmRemove()" class="confirm-btn" data-uz="Tasdiqlash" data-ru="Подтвердить">Tasdiqlash</button>
+                <button onclick="closeModal()" class="cancel-btn" data-uz="Bekor qilish" data-ru="Отмена">Bekor qilish</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/remove.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/snow.js') }}"></script>
+</body>
+</html>

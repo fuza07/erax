@@ -1,0 +1,213 @@
+/* New Year Theme */
+body.theme-newyear {
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+
+
+body.theme-newyear .sidebar h2::after {
+    content: ' ☃️';
+    font-size: 30px;
+}
+
+body.theme-newyear .sidebar {
+    background: #c41e3a !important;
+    position: relative;
+    overflow: hidden;
+}
+
+body.theme-newyear .sidebar nav a.active {
+    background: #8b0000 !important;
+}
+
+body.theme-newyear .sidebar nav a:hover {
+    background: #a01020 !important;
+}
+
+body.theme-newyear .sidebar h2,
+body.theme-newyear .sidebar nav a {
+    position: relative;
+    z-index: 2;
+}
+
+body.theme-newyear h1::before {
+    content: '🎄 ';
+}
+
+body.theme-newyear h1::after {
+    content: ' ☃️';
+}
+
+body.theme-newyear .stat-card::before {
+    content: '❄️';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    opacity: 0.3;
+}
+
+/* Navruz Theme */
+body.theme-navruz::before {
+    content: '🌸 🌺 🌼 🌷 🌻 🌸 🌺 🌼';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    font-size: 35px;
+    animation: flowers 20s linear infinite;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.7;
+}
+
+body.theme-navruz::after {
+    content: '🦋';
+    position: fixed;
+    bottom: 10%;
+    left: 5%;
+    font-size: 50px;
+    animation: fly 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 9998;
+}
+
+body.theme-navruz .sidebar::before {
+    content: '🌱 🌿';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 30px;
+}
+
+body.theme-navruz h1::before {
+    content: '🌸 ';
+}
+
+body.theme-navruz h1::after {
+    content: ' 🌼';
+}
+
+body.theme-navruz .stat-card::before {
+    content: '🌺';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    opacity: 0.3;
+}
+
+/* Islamic Eid Theme */
+body.theme-eid::before {
+    content: '🌙 ⭐ ✨ 🌙 ⭐ ✨ 🌙 ⭐';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    font-size: 35px;
+    animation: stars 25s linear infinite;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.6;
+}
+
+body.theme-eid::after {
+    content: '🕌';
+    position: fixed;
+    top: 15%;
+    right: 10%;
+    font-size: 60px;
+    animation: pulse 3s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 9998;
+}
+
+body.theme-eid .sidebar::before {
+    content: '🌙 ⭐';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 30px;
+}
+
+body.theme-eid h1::before {
+    content: '🌙 ';
+}
+
+body.theme-eid h1::after {
+    content: ' ⭐';
+}
+
+body.theme-eid .stat-card::before {
+    content: '✨';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    opacity: 0.3;
+}
+
+/* Ordinary Theme (default) */
+body.theme-ordinary {
+    /* Uses default styles */
+}
+
+.snowflake {
+    position: fixed;
+    top: -10px;
+    font-size: 12px;
+    color: white;
+    pointer-events: none;
+    z-index: 9999;
+    animation: fall linear forwards;
+    opacity: 0.8;
+}
+
+.snowflake-sidebar {
+    position: absolute;
+    top: -10px;
+    font-size: 10px;
+    color: white;
+    pointer-events: none;
+    z-index: 1;
+    animation: fall linear forwards;
+    opacity: 0.6;
+}
+
+@keyframes fall {
+    to { transform: translateY(100vh) rotate(360deg); }
+}
+
+@keyframes slide {
+    0%, 100% { transform: translateX(0) rotate(-10deg); }
+    50% { transform: translateX(-30px) rotate(10deg); }
+}
+
+@keyframes flowers {
+    0% { transform: translateY(-100vh) rotate(0deg); }
+    100% { transform: translateY(100vh) rotate(720deg); }
+}
+
+@keyframes fly {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(50px, -30px); }
+    50% { transform: translate(100px, 0); }
+    75% { transform: translate(50px, 30px); }
+}
+
+@keyframes stars {
+    0% { transform: translateX(-100vw); }
+    100% { transform: translateX(100vw); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.1); opacity: 1; }
+}
+
+.stat-card {
+    position: relative;
+    overflow: hidden;
+}

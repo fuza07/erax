@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID ni tiklash - Erax Sklad</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1>Erax Sklad</h1>
+            <div class="lang-switch">
+                <button onclick="setLang('uz')" id="btn-uz">O'zbek</button>
+                <button onclick="setLang('ru')" id="btn-ru">Русский</button>
+            </div>
+            
+            <div class="login-form">
+                <h2 data-uz="Sklad ID ni tiklash" data-ru="Восстановить ID склада">Sklad ID ni tiklash</h2>
+                <p data-uz="Telefon raqamingizni kiriting" data-ru="Введите ваш номер телефона">Telefon raqamingizni kiriting</p>
+                <input type="tel" id="phone-input" placeholder="+998901234567" data-uz-placeholder="+998901234567" data-ru-placeholder="+998901234567">
+                <button onclick="recoverID()" data-uz="ID ni topish" data-ru="Найти ID">ID ni topish</button>
+                
+                <div id="result" style="display:none; margin-top:20px; padding:15px; background:#d4edda; border-radius:5px;">
+                    <p data-uz="Sizning sklad ID:" data-ru="Ваш ID склада:">Sizning sklad ID:</p>
+                    <strong id="recovered-id" style="font-size:18px;"></strong>
+                </div>
+                
+                <a href="/" style="display:block; text-align:center; margin-top:20px; color:#007bff;" data-uz="Orqaga" data-ru="Назад">Orqaga</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/recover.js') }}"></script>
+</body>
+</html>

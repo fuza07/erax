@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shaxsiy kabinet - Erax Sklad</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themes.css') }}">
+</head>
+<body>
+    <div id="sidebar-placeholder"></div>
+
+    <div class="main-content">
+        <header>
+            <h1 data-uz="Shaxsiy kabinet" data-ru="Личный кабинет">Shaxsiy kabinet</h1>
+        </header>
+
+        <div class="cabinet-grid">
+            <div class="info-card">
+                <h3 data-uz="Foydalanuvchi ma'lumotlari" data-ru="Информация пользователя">Foydalanuvchi ma'lumotlari</h3>
+                <div class="info-row">
+                    <span data-uz="Ism:" data-ru="Имя:">Ism:</span>
+                    <strong id="username">-</strong>
+                </div>
+                <div class="info-row">
+                    <span data-uz="Telefon:" data-ru="Телефон:">Telefon:</span>
+                    <strong id="phone">-</strong>
+                </div>
+                <div class="info-row">
+                    <span data-uz="Maqom:" data-ru="Должность:">Maqom:</span>
+                    <strong id="role">-</strong>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3 data-uz="Sklad ma'lumotlari" data-ru="Информация о складе">Sklad ma'lumotlari</h3>
+                <div class="info-row">
+                    <span data-uz="Sklad nomi:" data-ru="Название склада:">Sklad nomi:</span>
+                    <strong id="warehouse-name">-</strong>
+                </div>
+                <div class="info-row">
+                    <span data-uz="Sklad ID:" data-ru="ID склада:">Sklad ID:</span>
+                    <div class="id-display">
+                        <strong id="warehouse-id">-</strong>
+                        <button onclick="copyId()" class="copy-btn" data-uz="Nusxalash" data-ru="Копировать">Nusxalash</button>
+                    </div>
+                </div>
+                <p class="warning" data-uz="⚠️ Bu ID maxfiy! Faqat ishonchli xodimlarga bering." data-ru="⚠️ Этот ID конфиденциален! Давайте только доверенным сотрудникам.">⚠️ Bu ID maxfiy! Faqat ishonchli xodimlarga bering.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/cabinet.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/snow.js') }}"></script>
+</body>
+</html>

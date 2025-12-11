@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Zakazlar - Erax Sklad</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/themes.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Erax Sklad</h2>
+        <nav>
+            <a href="/">Asosiy</a>
+            <a href="/add">Tovar qo'shish</a>
+            <a href="/remove">Tovar chiqarish</a>
+            <a href="/stats">Statistika</a>
+            <div class="divider"></div>
+            <a href="/orders" class="active" id="orders-link">📦 Zakazlar</a>
+            <a href="/debts">💰 Qarzlar</a>
+            <div class="divider"></div>
+            <a href="/cabinet">Shaxsiy kabinet</a>
+            <a href="/manage" id="manage-link" style="display:none">Sklad boshqaruvi</a>
+            <a href="/settings" id="settings-link" style="display:none">⚙️ Sozlamalar</a>
+            <a href="/logout" class="logout">Chiqish</a>
+        </nav>
+    </div>
+    
+    <div class="main-content">
+    <div class="container">
+        <div class="header">
+            <h1>📦 Zakazlar</h1>
+            <div>
+                <button onclick="showOrderModal()" class="btn-primary">➕ Zakaz qo'shish</button>
+                <a href="/" class="btn-secondary">🏠 Bosh sahifa</a>
+            </div>
+        </div>
+
+        <div id="orders-list"></div>
+    </div>
+
+    <div id="orderModal" class="modal">
+        <div class="modal-content modal-compact">
+            <span class="close" onclick="closeOrderModal()">&times;</span>
+            <h2>Yangi zakaz</h2>
+            <form onsubmit="createOrder(event)">
+                <div id="order-items"></div>
+                
+                <button type="button" onclick="addItem()" class="btn-add-item">+ Tovar</button>
+                
+                <div class="order-total">
+                    <strong>Jami:</strong>
+                    <span id="total-sum">0 so'm</span>
+                </div>
+                
+                <textarea id="order_note" placeholder="Izoh" rows="2"></textarea>
+                
+                <button type="submit" class="btn-primary">Yaratish</button>
+            </form>
+        </div>
+    </div>
+
+    </div>
+    </div>
+    
+    <script src="/static/js/utils.js"></script>
+    <script src="/static/js/sidebar.js"></script>
+    <script src="/static/js/snow.js"></script>
+    <script>
+        fetch('/api/user/info')
+            .then(r => r.json())
+            .then(data => {
+                if (data.role === 'boss' || data.role === 'manager') {
+                    document.getElementById('manage-link').style.display = 'block';
+                }
+                if (data.role === 'boss') {
+                    document.getElementById('settings-link').style.display = 'block';
+                }
+            });
+        
+        // Main code
+        let products = [];
+        let itemCounter = 1;
+
+        loadData();
+
+        function loadData() {
+            Promise.all([
+                fetch('/api/products').then(r => r.json()),
+                fetch('/api/orders').then(r => r.json())
+            ]).then(([p, o]) => {
+                products = p;
+                displayOrders(o);
+            });
+        }
+
+        function displayOrders(orders) {
+            const container = document.getElementById('orders-list');
+            if (orders.length === 0) {
+                container.innerHTML = '<p style="text-align:center;padding:40px;">Zakazlar yo\'q</p>';
+                return;
+            }
+            
+            container.innerHTML = orders.map(o => `
+                <div class="order-card">
+                    <div class="order-header">
+                        <h3>Zakaz #${o.id}</h3>
+                        <span>${o.date}</span>
+                    </div>
+                    <div class="order-items-list">
+                        ${o.items.map(i => `
+                            <div class="order-item-row">
+                                <strong>${i.name}</strong> ${i.model ? '(' + i.model + ')' : ''}
+                                <br>
+                                <small>${i.boxes} quti × ${i.items} dona = ${i.boxes * i.items} dona</small>
+                                <br>
+                                <small>Narx: ${Utils.formatNumber(i.price)} so'm/dona</small>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ${o.note ? `<p class="order-note">📝 ${o.note}</p>` : ''}
+                    <button onclick="deliverOrder(${o.id})" class="btn-primary">✅ Berildi</button>
+                </div>
+            `).join('');
+        }
+
+        function showOrderModal() {
+            updateProductSelects();
+            document.getElementById('orderModal').style.display = 'block';
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').style.display = 'none';
+            document.getElementById('order-items').innerHTML = '';
+            itemCounter = 1;
+            addItem();
+        }
+
+        function updateProductSelects() {
+            const selects = document.querySelectorAll('.product-select');
+            const options = '<option value="">Skladdan yoki -</option>' + 
+                products.map(p => `<option value="${p.id}" data-name="${p.name}" data-model="${p.model || ''}" data-price="${p.price}">${p.name} (${p.quantity} dona)</option>`).join('');
+            selects.forEach(s => s.innerHTML = options);
+        }
+
+        function fillProduct(select) {
+            const card = select.closest('.order-item-compact');
+            if (!select.value) {
+                card.querySelector('.item-name').value = '';
+                card.querySelector('.item-model').value = '';
+                card.querySelector('.item-boxes').value = '-';
+                card.querySelector('.item-items').value = '-';
+                card.querySelector('.item-price').value = '';
+                delete card.dataset.fromStock;
+                calculateTotal();
+                return;
+            }
+            const option = select.selectedOptions[0];
+            const product = products.find(p => p.id == select.value);
+            card.querySelector('.item-name').value = option.dataset.name;
+            card.querySelector('.item-model').value = option.dataset.model || '';
+            card.querySelector('.item-boxes').value = product.box_quantity || 1;
+            card.querySelector('.item-items').value = product.items_per_box || 1;
+            card.querySelector('.item-price').value = option.dataset.price;
+            card.dataset.fromStock = '1';
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            let total = 0;
+            document.querySelectorAll('.order-item-compact').forEach(card => {
+                const boxes = card.querySelector('.item-boxes').value;
+                const items = card.querySelector('.item-items').value;
+                const price = parseFloat(card.querySelector('.item-price').value) || 0;
+                
+                let quantity = 1;
+                if (boxes !== '-' && items !== '-') {
+                    const b = parseInt(boxes) || 0;
+                    const i = parseInt(items) || 0;
+                    quantity = b * i;
+                }
+                
+                total += quantity * price;
+            });
+            document.getElementById('total-sum').textContent = Utils.formatNumber(total) + ' so\'m';
+        }
+
+        function addItem() {
+            itemCounter++;
+            const container = document.getElementById('order-items');
+            const item = document.createElement('div');
+            item.className = 'order-item-compact';
+            item.innerHTML = `
+                <div class="item-header">
+                    <span>#${itemCounter}</span>
+                    <button type="button" onclick="removeItem(this)" class="btn-remove">×</button>
+                </div>
+                <select class="product-select" onchange="fillProduct(this)">
+                    <option value="">Skladdan yoki -</option>
+                </select>
+                <input type="text" class="item-name" placeholder="Nom *" oninput="calculateTotal()" required>
+                <input type="text" class="item-model" placeholder="Model">
+                <div class="input-row">
+                    <input type="text" class="item-boxes" placeholder="Quti" value="-" oninput="calculateTotal()">
+                    <input type="text" class="item-items" placeholder="Dona" value="-" oninput="calculateTotal()">
+                    <input type="number" step="0.01" class="item-price" placeholder="Narx *" oninput="calculateTotal()" required>
+                </div>
+            `;
+            container.appendChild(item);
+            updateProductSelects();
+            calculateTotal();
+        }
+
+        function removeItem(btn) {
+            if (document.querySelectorAll('.order-item-compact').length > 1) {
+                btn.closest('.order-item-compact').remove();
+                calculateTotal();
+            } else {
+                Utils.showToast('Kamida 1 ta tovar kerak!', 'error');
+            }
+        }
+
+        function createOrder(e) {
+            e.preventDefault();
+            const items = [];
+            document.querySelectorAll('.order-item-compact').forEach(card => {
+                const boxesVal = card.querySelector('.item-boxes').value;
+                const itemsVal = card.querySelector('.item-items').value;
+                
+                items.push({
+                    name: card.querySelector('.item-name').value,
+                    model: card.querySelector('.item-model').value || null,
+                    boxes: boxesVal === '-' ? 1 : parseInt(boxesVal) || 1,
+                    items: itemsVal === '-' ? 1 : parseInt(itemsVal) || 1,
+                    price: parseFloat(card.querySelector('.item-price').value),
+                    from_stock: card.dataset.fromStock ? 1 : 0
+                });
+            });
+
+            const data = {
+                items: items,
+                note: document.getElementById('order_note').value || null
+            };
+
+            fetch('/api/orders', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    Utils.showToast('Zakaz yaratildi!', 'success');
+                    closeOrderModal();
+                    loadData();
+                }
+            });
+        }
+
+        function deliverOrder(id) {
+            if (confirm('Zakaz berilganini tasdiqlaysizmi?')) {
+                fetch(`/api/orders/${id}/deliver`, {method: 'POST'})
+                    .then(r => r.json())
+                    .then(result => {
+                        if (result.success) {
+                            Utils.showToast('Zakaz berildi!', 'success');
+                            loadData();
+                        }
+                    });
+            }
+        }
+    </script>
+</body>
+</html>

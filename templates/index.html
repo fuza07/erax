@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Erax Sklad</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themes.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/announcement.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="announcement-banner">
+        <div class="announcement-content">
+            <div class="announcement-text" data-uz="⚠️ Sayt test sinovida ishlamoqda! Iltimos kamchiliklarni Support tizimiga yozib qoldiring: @eraxsklad_bot" data-ru="⚠️ Сайт работает в тестовом режиме! Пожалуйста, сообщайте об ошибках в Support: @eraxsklad_bot">⚠️ Sayt test sinovida ishlamoqda! Iltimos kamchiliklarni Support tizimiga yozib qoldiring: @eraxsklad_bot</div>
+        </div>
+        <a href="https://t.me/eraxsklad_bot?start=support" target="_blank" class="telegram-btn">
+            <span>📞</span>
+            <span data-uz="Support" data-ru="Поддержка">Support</span>
+        </a>
+    </div>
+    
+    <div id="sidebar-placeholder"></div>
+
+    <div class="main-content">
+        <header>
+            <h1 data-uz="Tovarlar ro'yxati" data-ru="Список товаров">Tovarlar ro'yxati</h1>
+            <p class="warehouse-info" data-uz="Sklad:" data-ru="Склад:">Sklad: <strong id="warehouse-name">-</strong></p>
+        </header>
+
+        <div class="products-list">
+            <table id="products-table">
+                <thead>
+                    <tr>
+                        <th data-uz="Rasm" data-ru="Фото">Rasm</th>
+                        <th data-uz="Nomi" data-ru="Название">Nomi</th>
+                        <th data-uz="Quti" data-ru="Коробок">Quti</th>
+                        <th data-uz="Dona" data-ru="Штук">Dona</th>
+                        <th data-uz="Narxi" data-ru="Цена">Narxi</th>
+                        <th data-uz="Jami" data-ru="Итого">Jami</th>
+                        <th data-uz="Amal" data-ru="Действие">Amal</th>
+                    </tr>
+                </thead>
+                <tbody id="products-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Chat Widget -->
+    <div id="chat-widget" style="display:none">
+        <div id="chat-box">
+            <div id="chat-header">
+                <span>Chat</span>
+                <button onclick="toggleChat()">×</button>
+            </div>
+            <div id="chat-messages"></div>
+            <div id="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Xabar yozing..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+                <button onclick="sendChatMessage()">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/snow.js') }}"></script>
+</body>
+</html>

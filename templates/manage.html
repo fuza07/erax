@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sklad boshqaruvi - Erax Sklad</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themes.css') }}">
+</head>
+<body>
+    <div id="sidebar-placeholder"></div>
+
+    <div class="main-content">
+        <header>
+            <h1 data-uz="Sklad boshqaruvi" data-ru="Управление складом">Sklad boshqaruvi</h1>
+        </header>
+
+        <div class="manage-section">
+            <h2 data-uz="Ishchilar ro'yxati" data-ru="Список сотрудников">Ishchilar ro'yxati</h2>
+            <table id="users-table">
+                <thead>
+                    <tr>
+                        <th data-uz="Ism" data-ru="Имя">Ism</th>
+                        <th data-uz="Maqom" data-ru="Должность">Maqom</th>
+                        <th data-uz="Qo'shilgan sana" data-ru="Дата присоединения">Qo'shilgan sana</th>
+                        <th data-uz="Amal" data-ru="Действие">Amal</th>
+                    </tr>
+                </thead>
+                <tbody id="users-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/backup.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/manage.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/snow.js') }}"></script>
+</body>
+</html>

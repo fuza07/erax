@@ -1,0 +1,107 @@
+/* Announcement Banner */
+.announcement-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #7f8c8d;
+    color: white;
+    padding: 5px 15px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    font-size: 13px;
+    height: 32px;
+}
+
+.announcement-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    overflow: hidden;
+}
+
+.announcement-text {
+    animation: scroll-text 20s linear infinite;
+    white-space: nowrap;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+@keyframes scroll-text {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+.telegram-btn {
+    background: white;
+    color: #7f8c8d;
+    border: none;
+    padding: 3px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.3s;
+    text-decoration: none;
+    font-size: 11px;
+    height: 22px;
+}
+
+.telegram-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(255,255,255,0.3);
+}
+
+body {
+    padding-top: 32px;
+}
+
+.sidebar {
+    top: 32px;
+    height: calc(100vh - 32px);
+}
+
+@media (max-width: 768px) {
+    .announcement-banner {
+        padding: 2px 8px;
+        height: 26px;
+        font-size: 10px;
+        justify-content: center;
+    }
+    
+    .announcement-text {
+        font-size: 9px;
+    }
+    
+    .telegram-btn {
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+        font-size: 11px;
+        padding: 6px 12px;
+        height: 32px;
+        white-space: nowrap;
+        gap: 5px;
+        z-index: 998;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    
+    body {
+        padding-top: 26px;
+    }
+    
+    .sidebar {
+        top: 26px;
+        height: calc(100vh - 26px);
+    }
+    
+    .mobile-menu-btn {
+        top: 28px;
+    }
+}

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Erax Sklad</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Disable page loader for admin panel */
+        body::before, body::after { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Admin Panel</h2>
+        <nav>
+            <a href="#" onclick="showSection('stats')" class="active" id="nav-stats">📊 Statistika</a>
+            <a href="#" onclick="showSection('users')" id="nav-users">👥 Foydalanuvchilar</a>
+            <a href="#" onclick="showSection('warehouses')" id="nav-warehouses">🏢 Skladlar</a>
+            <a href="#" onclick="showSection('subscriptions')" id="nav-subscriptions">💳 Obunalar</a>
+            <a href="#" onclick="showSection('messages')" id="nav-messages">📨 Xabarlar</a>
+            <div class="divider"></div>
+            <a href="/admin/themes">🎨 Dizayn Boshqaruvi</a>
+            <a href="/">🔙 Saytga qaytish</a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1 id="page-title">Admin Dashboard</h1>
+        </header>
+
+        <!-- Statistika Bo'limi -->
+        <div id="section-stats" class="admin-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Jami Skladlar</h3>
+                <p id="total-warehouses">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Jami Foydalanuvchilar</h3>
+                <p id="total-users">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Faol Obunalar</h3>
+                <p id="active-subscriptions">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Oylik Daromad</h3>
+                <p id="monthly-revenue">0 so'm</p>
+            </div>
+        </div>
+
+        <div class="manage-section">
+            <h2>Foydalanuvchi Qidirish</h2>
+            <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                <input type="tel" id="search-phone" placeholder="+998901234567" style="flex: 1; padding: 10px;">
+                <button onclick="searchUser()" class="confirm-btn">Qidirish</button>
+            </div>
+            
+            <div id="user-result" style="display: none;">
+                <div class="info-card">
+                    <h3>Foydalanuvchi Ma'lumotlari</h3>
+                    <div class="info-row">
+                        <span>Ism:</span>
+                        <span id="user-name">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span>Telefon:</span>
+                        <span id="user-phone">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span>Sklad ID:</span>
+                        <span id="user-warehouse">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span>Obuna:</span>
+                        <span id="user-subscription">Sinov</span>
+                    </div>
+                    <div class="info-row">
+                        <span>Muddat:</span>
+                        <span id="user-expiry">-</span>
+                    </div>
+                    
+                    <h3 style="margin-top: 20px;">Obuna O'zgartirish</h3>
+                    <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+                        <select id="subscription-type" style="flex: 1; min-width: 150px; padding: 8px;">
+                            <option value="trial">Sinov (Bepul)</option>
+                            <option value="basic">Oddiy (20,000/oy)</option>
+                            <option value="pro">Pro (50,000/oy)</option>
+                            <option value="premium">Premium (100,000/oy)</option>
+                        </select>
+                        <select id="subscription-period" style="flex: 1; min-width: 120px; padding: 8px;">
+                            <option value="1">1 oy</option>
+                            <option value="3">3 oy</option>
+                            <option value="12">1 yil</option>
+                        </select>
+                        <button onclick="updateSubscription()" class="confirm-btn" style="min-width: 120px;">Yangilash</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Foydalanuvchilar Bo'limi -->
+        <div id="section-users" class="admin-section" style="display: none;">
+            <div class="manage-section">
+                <h2>Barcha Foydalanuvchilar</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ism</th>
+                            <th>Telefon</th>
+                            <th>Sklad ID</th>
+                            <th>Obuna</th>
+                            <th>Muddat</th>
+                        </tr>
+                    </thead>
+                    <tbody id="all-users-table">
+                        <tr><td colspan="6" style="text-align: center;">Yuklanmoqda...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Skladlar Bo'limi -->
+        <div id="section-warehouses" class="admin-section" style="display: none;">
+            <div class="manage-section">
+                <h2>Barcha Skladlar</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sklad ID</th>
+                            <th>Nomi</th>
+                            <th>Yaratilgan</th>
+                            <th>Obuna</th>
+                            <th>Foydalanuvchilar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="all-warehouses-table">
+                        <tr><td colspan="5" style="text-align: center;">Yuklanmoqda...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Obunalar Bo'limi -->
+        <div id="section-subscriptions" class="admin-section" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Sinov</h3>
+                    <p id="trial-count">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Oddiy</h3>
+                    <p id="basic-count">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Pro</h3>
+                    <p id="pro-count">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Premium</h3>
+                    <p id="premium-count">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Xabarlar Bo'limi -->
+        <div id="section-messages" class="admin-section" style="display: none;">
+            <div class="manage-section">
+                <h2>Skladlarga xabar yuborish</h2>
+                <select id="message-type" onchange="toggleWarehouseInput()" style="width: 100%; padding: 10px; margin-bottom: 15px;">
+                    <option value="all">Barcha skladlarga</option>
+                    <option value="single">Bitta skladga</option>
+                </select>
+                
+                <div id="warehouse-select-div" style="display: none; margin-bottom: 15px;">
+                    <input type="text" id="target-warehouse-id" placeholder="Sklad ID" style="width: 100%; padding: 10px;">
+                </div>
+                
+                <textarea id="message-text" rows="5" placeholder="Xabar matni..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 15px;"></textarea>
+                
+                <button onclick="sendAdminMessage()" class="confirm-btn" style="width: 100%;">📨 Yuborish</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>

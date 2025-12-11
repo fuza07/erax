@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Sozlamalar - Erax Sklad</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/themes.css">
+</head>
+<body>
+    <div id="sidebar-placeholder"></div>
+    
+    <div class="main-content">
+    <div class="container">
+        <div class="header">
+            <h1 data-uz="⚙️ Sklad Sozlamalari" data-ru="⚙️ Настройки склада">⚙️ Sklad Sozlamalari</h1>
+            <a href="/" class="btn-secondary" data-uz="🏠 Bosh sahifa" data-ru="🏠 Главная">🏠 Bosh sahifa</a>
+        </div>
+
+        <div class="settings-card">
+            <h2 data-uz="Funksiyalarni yoqish/o'chirish" data-ru="Включить/выключить функции">Funksiyalarni yoqish/o'chirish</h2>
+            <p class="settings-desc" data-uz="Skladingiz uchun kerakli funksiyalarni tanlang" data-ru="Выберите необходимые функции для вашего склада">Skladingiz uchun kerakli funksiyalarni tanlang</p>
+
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h3 data-uz="📸 Tovarlarga rasm qo'shish" data-ru="📸 Добавление фото к товарам">📸 Tovarlarga rasm qo'shish</h3>
+                    <p data-uz="Har bir tovar uchun rasm yuklash imkoniyati" data-ru="Возможность загрузки фото для каждого товара">Har bir tovar uchun rasm yuklash imkoniyati</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="enable_images">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h3 data-uz="📦 Zakaz tizimi" data-ru="📦 Система заказов">📦 Zakaz tizimi</h3>
+                    <p data-uz="Mijozlarga zakaz berish va qarzlarni boshqarish" data-ru="Выдача заказов клиентам и управление долгами">Mijozlarga zakaz berish va qarzlarni boshqarish</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="enable_orders">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h3 data-uz="📊 Kirim-chiqim statistikasi" data-ru="📊 Статистика прихода-расхода">📊 Kirim-chiqim statistikasi</h3>
+                    <p data-uz="Kunlik, haftalik va oylik statistika va Excel export" data-ru="Ежедневная, еженедельная и ежемесячная статистика и экспорт в Excel">Kunlik, haftalik va oylik statistika va Excel export</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="enable_statistics">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h3 data-uz="💬 Chat va bildirishnomalar" data-ru="💬 Чат и уведомления">💬 Chat va bildirishnomalar</h3>
+                    <p data-uz="Xodimlar o'rtasida chat va boss tomonidan bildirishnomalar" data-ru="Чат между сотрудниками и уведомления от руководителя">Xodimlar o'rtasida chat va boss tomonidan bildirishnomalar</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="enable_chat">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <button onclick="saveSettings()" class="btn-primary" data-uz="💾 Saqlash" data-ru="💾 Сохранить">💾 Saqlash</button>
+        </div>
+    </div>
+
+    </div>
+    </div>
+    
+    <script src="/static/js/utils.js"></script>
+    <script src="/static/js/sidebar.js"></script>
+    <script src="/static/js/snow.js"></script>
+    <script>
+        
+        // Sozlamalarni yuklash
+        fetch('/api/settings')
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('enable_images').checked = data.enable_images;
+                document.getElementById('enable_orders').checked = data.enable_orders;
+                document.getElementById('enable_statistics').checked = data.enable_statistics;
+                document.getElementById('enable_chat').checked = data.enable_chat;
+                
+                if (data.enable_orders) {
+                    document.getElementById('orders-link').style.display = 'block';
+                    document.getElementById('features-divider').style.display = 'block';
+                }
+            });
+
+        function saveSettings() {
+            const settings = {
+                enable_images: document.getElementById('enable_images').checked ? 1 : 0,
+                enable_orders: document.getElementById('enable_orders').checked ? 1 : 0,
+                enable_statistics: document.getElementById('enable_statistics').checked ? 1 : 0,
+                enable_chat: document.getElementById('enable_chat').checked ? 1 : 0
+            };
+
+            fetch('/api/settings', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(settings)
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    Utils.showToast('Sozlamalar saqlandi!', 'success');
+                    setTimeout(() => window.location.href = '/', 1500);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

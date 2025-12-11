@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Kirish - Erax Sklad</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body::before, body::after { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1>Admin Panel</h1>
+            
+            <form method="POST" class="login-form">
+                <h2>Admin Kirish</h2>
+                {% if error %}
+                    <div style="color: #e74c3c; margin-bottom: 15px; text-align: center;">{{ error }}</div>
+                {% endif %}
+                <input type="password" name="password" placeholder="Admin parol" required>
+                <button type="submit">Kirish</button>
+                
+                <div style="margin-top:20px; text-align:center;">
+                    <a href="/" style="color:#007bff; text-decoration:none;">Saytga qaytish</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

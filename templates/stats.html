@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistika - Erax Sklad</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themes.css') }}">
+</head>
+<body>
+    <div id="sidebar-placeholder"></div>
+
+    <div class="main-content">
+        <header>
+            <h1 data-uz="Statistika" data-ru="Статистика">Statistika</h1>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3 data-uz="Jami tovarlar" data-ru="Всего товаров">Jami tovarlar</h3>
+                <p id="total-quantity">0</p>
+            </div>
+            <div class="stat-card">
+                <h3 data-uz="Umumiy qiymat" data-ru="Общая стоимость">Umumiy qiymat</h3>
+                <p id="total-value">0 so'm</p>
+            </div>
+            <div class="stat-card">
+                <h3 data-uz="Oylik kirim" data-ru="Месячный приход">Oylik kirim</h3>
+                <p id="monthly-in">0 so'm</p>
+            </div>
+            <div class="stat-card">
+                <h3 data-uz="Oylik chiqim" data-ru="Месячный расход">Oylik chiqim</h3>
+                <p id="monthly-out">0 so'm</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/stats.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/snow.js') }}"></script>
+</body>
+</html>

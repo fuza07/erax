@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Qarzlar - Erax Sklad</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/themes.css">
+</head>
+<body>
+    <div id="sidebar-placeholder"></div>
+    
+    <div class="main-content">
+    <div class="container">
+        <div class="header">
+            <h1 data-uz="💰 Qarzlar" data-ru="💰 Долги">💰 Qarzlar</h1>
+            <div>
+                <button onclick="showAddModal()" class="btn-primary" data-uz="➕ Qarz qo'shish" data-ru="➕ Добавить долг">➕ Qarz qo'shish</button>
+                <a href="/" class="btn-secondary" data-uz="🏠 Bosh sahifa" data-ru="🏠 Главная">🏠 Bosh sahifa</a>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3 data-uz="Men qarzman" data-ru="Я должен">Men qarzman</h3>
+                <p id="my-debts">0 so'm</p>
+            </div>
+            <div class="stat-card">
+                <h3 data-uz="Mendan qarz" data-ru="Мне должны">Mendan qarz</h3>
+                <p id="their-debts">0 so'm</p>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th data-uz="Turi" data-ru="Тип">Turi</th>
+                        <th data-uz="Shaxs" data-ru="Лицо">Shaxs</th>
+                        <th data-uz="Summa" data-ru="Сумма">Summa</th>
+                        <th data-uz="Sana" data-ru="Дата">Sana</th>
+                        <th data-uz="Amal" data-ru="Действие">Amal</th>
+                    </tr>
+                </thead>
+                <tbody id="debts-table"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 data-uz="Qarz qo'shish" data-ru="Добавить долг">Qarz qo'shish</h2>
+            <form onsubmit="addDebt(event)">
+                <select id="debt_type" required>
+                    <option value="" data-uz="Qarz turini tanlang" data-ru="Выберите тип долга">Qarz turini tanlang</option>
+                    <option value="my" data-uz="Men qarzman" data-ru="Я должен">Men qarzman</option>
+                    <option value="their" data-uz="Mendan qarz" data-ru="Мне должны">Mendan qarz</option>
+                </select>
+                <input type="text" id="person_name" placeholder="Shaxs ismi" data-uz-placeholder="Shaxs ismi" data-ru-placeholder="Имя лица" required>
+                <input type="number" step="0.01" id="debt_amount" placeholder="Summa" data-uz-placeholder="Summa" data-ru-placeholder="Сумма" required>
+                <button type="submit" class="btn-primary" data-uz="Qo'shish" data-ru="Добавить">Qo'shish</button>
+            </form>
+        </div>
+    </div>
+
+    </div>
+    </div>
+    
+    <script src="/static/js/utils.js"></script>
+    <script src="/static/js/sidebar.js"></script>
+    <script src="/static/js/snow.js"></script>
+    <script>
+        fetch('/api/user/info')
+            .then(r => r.json())
+            .then(data => {
+                if (data.role === 'boss' || data.role === 'manager') {
+                    document.getElementById('manage-link').style.display = 'block';
+                }
+                if (data.role === 'boss') {
+                    document.getElementById('settings-link').style.display = 'block';
+                    fetch('/api/settings')
+                        .then(r => r.json())
+                        .then(settings => {
+                            if (settings.enable_orders) {
+                                document.getElementById('orders-link').style.display = 'block';
+                                document.getElementById('features-divider').style.display = 'block';
+                            }
+                        });
+                }
+            });
+        
+        loadDebts();
+
+        function loadDebts() {
+            fetch('/api/debts')
+                .then(r => r.json())
+                .then(data => {
+                    const tbody = document.getElementById('debts-table');
+                    let myTotal = 0, theirTotal = 0;
+                    
+                    tbody.innerHTML = data.map(d => {
+                        if (d.type === 'my') myTotal += d.amount;
+                        else theirTotal += d.amount;
+                        
+                        return `<tr>
+                            <td><span class="badge ${d.type === 'my' ? 'badge-warning' : 'badge-success'}">${d.type === 'my' ? 'Men qarzman' : 'Mendan qarz'}</span></td>
+                            <td>${d.person}</td>
+                            <td>${Utils.formatNumber(d.amount)} so'm</td>
+                            <td>${d.date}</td>
+                            <td><button onclick="payDebt(${d.id})" class="btn-sm">✅ To'landi</button></td>
+                        </tr>`;
+                    }).join('');
+                    
+                    document.getElementById('my-debts').textContent = Utils.formatNumber(myTotal) + ' so\'m';
+                    document.getElementById('their-debts').textContent = Utils.formatNumber(theirTotal) + ' so\'m';
+                });
+        }
+
+        function showAddModal() {
+            document.getElementById('addModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('addModal').style.display = 'none';
+        }
+
+        function addDebt(e) {
+            e.preventDefault();
+            const data = {
+                type: document.getElementById('debt_type').value,
+                person: document.getElementById('person_name').value,
+                amount: parseFloat(document.getElementById('debt_amount').value)
+            };
+
+            fetch('/api/debts', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    Utils.showToast('Qarz qo\'shildi!', 'success');
+                    closeModal();
+                    loadDebts();
+                    e.target.reset();
+                }
+            });
+        }
+
+        function payDebt(id) {
+            if (confirm('Qarz to\'langanini tasdiqlaysizmi?')) {
+                fetch(`/api/debts/${id}`, {method: 'DELETE'})
+                    .then(r => r.json())
+                    .then(result => {
+                        if (result.success) {
+                            Utils.showToast('Qarz to\'landi!', 'success');
+                            loadDebts();
+                        }
+                    });
+            }
+        }
+    </script>
+</body>
+</html>

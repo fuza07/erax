@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chat - Erax Sklad</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/themes.css">
+    <link rel="stylesheet" href="/static/css/announcement.css">
+    <link rel="stylesheet" href="/static/css/mobile.css">
+    <style>
+        .chat-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            height: calc(100vh - 100px);
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .chat-message {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .chat-message.boss-message {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-left: 4px solid #ffd700;
+        }
+        .chat-message.boss-message strong {
+            color: #ffd700;
+        }
+        .chat-message.system-message {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-left: 4px solid #ff0000;
+            font-weight: bold;
+        }
+        .chat-message.system-message strong {
+            color: #ffff00;
+        }
+        .chat-message strong {
+            color: #667eea;
+            font-size: 14px;
+        }
+        .chat-message p {
+            margin: 5px 0;
+            color: #2c3e50;
+        }
+        .chat-message.boss-message p,
+        .chat-message.system-message p {
+            color: white;
+        }
+        .chat-message small {
+            color: #95a5a6;
+            font-size: 11px;
+        }
+        .chat-message.boss-message small,
+        .chat-message.system-message small {
+            color: rgba(255,255,255,0.8);
+        }
+        .chat-input-area {
+            display: flex;
+            padding: 20px;
+            border-top: 1px solid #ecf0f1;
+            background: white;
+            border-radius: 0 0 15px 15px;
+        }
+        .chat-input-area input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        .chat-input-area button {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="announcement-banner">
+        <div class="announcement-content">
+            <div class="announcement-text" data-uz="⚠️ Sayt test sinovida ishlamoqda! Iltimos kamchiliklarni Support tizimiga yozib qoldiring: @eraxsklad_bot" data-ru="⚠️ Сайт работает в тестовом режиме! Пожалуйста, сообщайте об ошибках в Support: @eraxsklad_bot">⚠️ Sayt test sinovida ishlamoqda! Iltimos kamchiliklarni Support tizimiga yozib qoldiring: @eraxsklad_bot</div>
+        </div>
+        <a href="https://t.me/eraxsklad_bot?start=support" target="_blank" class="telegram-btn">
+            <span>📞</span>
+            <span data-uz="Support" data-ru="Поддержка">Support</span>
+        </a>
+    </div>
+    
+    <div id="sidebar-placeholder"></div>
+    
+    <div class="main-content">
+        <div class="chat-container">
+            <div class="chat-header" data-uz="💬 Sklad Chat" data-ru="💬 Чат склада">💬 Sklad Chat</div>
+            <div class="chat-messages" id="chat-messages"></div>
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Xabar yozing..." data-uz-placeholder="Xabar yozing..." data-ru-placeholder="Напишите сообщение..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button onclick="sendMessage()">➤</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/utils.js"></script>
+    <script src="/static/js/sidebar.js"></script>
+    <script src="/static/js/snow.js"></script>
+    <script>
+        let userRole = '';
+        
+        fetch('/api/user/info')
+            .then(r => r.json())
+            .then(data => {
+                userRole = data.role;
+            });
+        
+        loadMessages();
+        setInterval(loadMessages, 5000);
+        
+        function loadMessages() {
+            fetch('/api/messages')
+                .then(r => r.json())
+                .then(messages => {
+                    const container = document.getElementById('chat-messages');
+                    container.innerHTML = messages.map(m => {
+                        let messageClass = 'chat-message';
+                        if (m.username === 'SYSTEM') {
+                            messageClass += ' system-message';
+                        } else if (m.is_boss) {
+                            messageClass += ' boss-message';
+                        }
+                        
+                        return `<div class="${messageClass}">
+                            <strong>${m.username}</strong>
+                            <p>${m.message}</p>
+                            <small>${m.date}</small>
+                        </div>`;
+                    }).join('');
+                    container.scrollTop = container.scrollHeight;
+                });
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            fetch('/api/messages', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message: message})
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    input.value = '';
+                    loadMessages();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

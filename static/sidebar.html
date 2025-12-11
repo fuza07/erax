@@ -1,0 +1,30 @@
+<button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<div class="sidebar-overlay" onclick="toggleMobileMenu()"></div>
+
+<div class="sidebar">
+    <h2>Erax Sklad</h2>
+    <nav>
+        <a href="/" data-uz="Asosiy" data-ru="Главная">Asosiy</a>
+        <a href="/add" data-uz="Tovar qo'shish" data-ru="Добавить товар">Tovar qo'shish</a>
+        <a href="/remove" data-uz="Tovar chiqarish" data-ru="Убрать товар">Tovar chiqarish</a>
+        <a href="/stats" data-uz="Statistika" data-ru="Статистика">Statistika</a>
+        <div class="divider"></div>
+        <a href="/orders" id="orders-link" style="display:none" data-uz="Zakazlar" data-ru="Заказы">Zakazlar</a>
+        <a href="/debts" data-uz="Qarzlar" data-ru="Долги">Qarzlar</a>
+        <a href="/chat" id="chat-link" style="display:none" data-uz="Chat" data-ru="Чат">Chat</a>
+        <div class="divider" id="features-divider" style="display:none"></div>
+        <a href="/cabinet" data-uz="Shaxsiy kabinet" data-ru="Личный кабинет">Shaxsiy kabinet</a>
+        <a href="/manage" id="manage-link" style="display:none" data-uz="Sklad boshqaruvi" data-ru="Управление складом">Sklad boshqaruvi</a>
+        <a href="/settings" id="settings-link" style="display:none" data-uz="Sozlamalar" data-ru="Настройки">Sozlamalar</a>
+        <a href="/logout" class="logout" data-uz="Chiqish" data-ru="Выйти">Chiqish</a>
+    </nav>
+    <div class="lang-switch-sidebar">
+        <button onclick="setLang('uz')">UZ</button>
+        <button onclick="setLang('ru')">RU</button>
+    </div>
+</div>

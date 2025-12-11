@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ro'yxatdan o'tish - Erax Sklad</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1>Erax Sklad</h1>
+            <div class="lang-switch">
+                <button onclick="setLang('uz')" id="btn-uz">O'zbek</button>
+                <button onclick="setLang('ru')" id="btn-ru">Русский</button>
+            </div>
+            
+            <div class="register-tabs">
+                <button class="tab-btn active" onclick="showTab('join')" id="tab-join" data-uz="Skladga qo'shilish" data-ru="Присоединиться к складу">Skladga qo'shilish</button>
+                <button class="tab-btn" onclick="showTab('create')" id="tab-create" data-uz="Yangi sklad" data-ru="Новый склад">Yangi sklad</button>
+            </div>
+
+            <div id="join-tab" class="tab-content active">
+                <div class="login-form">
+                    <h2 data-uz="Mavjud skladga qo'shilish" data-ru="Присоединиться к складу">Mavjud skladga qo'shilish</h2>
+                    <input type="text" id="join-warehouse-id" placeholder="Sklad ID" data-uz-placeholder="Sklad ID" data-ru-placeholder="ID склада">
+                    <input type="text" id="join-username" placeholder="Ismingiz" data-uz-placeholder="Ismingiz" data-ru-placeholder="Ваше имя">
+                    <button onclick="joinWarehouse()" data-uz="Qo'shilish" data-ru="Присоединиться">Qo'shilish</button>
+                </div>
+            </div>
+
+            <div id="create-tab" class="tab-content">
+                <div class="login-form">
+                    <h2 data-uz="Yangi sklad ochish" data-ru="Открыть новый склад">Yangi sklad ochish</h2>
+                    <input type="text" id="create-warehouse-name" placeholder="Sklad nomi" data-uz-placeholder="Masalan: Asosiy Sklad" data-ru-placeholder="Например: Основной Склад">
+                    <input type="text" id="create-username" placeholder="Ismingiz" data-uz-placeholder="To'liq ismingizni kiriting" data-ru-placeholder="Введите полное имя">
+                    <input type="tel" id="create-phone" placeholder="Telefon raqamingiz" data-uz-placeholder="+998 90 123 45 67" data-ru-placeholder="+998 90 123 45 67">
+                    <button onclick="sendToTelegram()" id="verify-btn" style="display:none" data-uz="Telefon raqamni tasdiqlash" data-ru="Подтвердить номер телефона">Telefon raqamni tasdiqlash</button>
+                </div>
+            </div>
+            
+            <div id="verification-tab" class="tab-content">
+                <div class="login-form">
+                    <h2 data-uz="Tasdiqlash kodi" data-ru="Код подтверждения">Tasdiqlash kodi</h2>
+                    <p class="info-text" data-uz="Telegram botdan kelgan 4 raqamli kodni kiriting" data-ru="Введите 4-значный код из Telegram бота">Telegram botdan kelgan 4 raqamli kodni kiriting</p>
+                    <div class="code-inputs">
+                        <input type="text" class="code-input" maxlength="1" id="code1">
+                        <input type="text" class="code-input" maxlength="1" id="code2">
+                        <input type="text" class="code-input" maxlength="1" id="code3">
+                        <input type="text" class="code-input" maxlength="1" id="code4">
+                    </div>
+                    <button onclick="verifyCode()" class="create-btn" data-uz="Tasdiqlash" data-ru="Подтвердить">Tasdiqlash</button>
+                </div>
+            </div>
+
+            <a href="/" style="display:block; text-align:center; margin-top:20px; color:#007bff;" data-uz="Orqaga" data-ru="Назад">Orqaga</a>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/register_simple.js') }}"></script>
+    <script>document.body.classList.add('loaded');</script>
+</body>
+</html>

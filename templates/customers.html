@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mijozlar - Erax Sklad</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👥 Mijozlar</h1>
+            <div>
+                <button onclick="showAddModal()" class="btn-primary">➕ Yangi mijoz</button>
+                <a href="/" class="btn-secondary">🏠 Bosh sahifa</a>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Ism</th>
+                        <th>Telefon</th>
+                        <th>Manzil</th>
+                        <th>Qo'shilgan sana</th>
+                    </tr>
+                </thead>
+                <tbody id="customers-table"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add Customer Modal -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Yangi mijoz qo'shish</h2>
+            <form onsubmit="addCustomer(event)">
+                <input type="text" id="customer_name" placeholder="Mijoz ismi" required>
+                <input type="tel" id="customer_phone" placeholder="Telefon raqam">
+                <input type="text" id="customer_address" placeholder="Manzil">
+                <button type="submit" class="btn-primary">Qo'shish</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/utils.js"></script>
+    <script>
+        loadCustomers();
+
+        function loadCustomers() {
+            fetch('/api/customers')
+                .then(r => r.json())
+                .then(data => {
+                    const tbody = document.getElementById('customers-table');
+                    tbody.innerHTML = data.map(c => `
+                        <tr>
+                            <td>${c.id}</td>
+                            <td>${c.name}</td>
+                            <td>${c.phone || '-'}</td>
+                            <td>${c.address || '-'}</td>
+                            <td>${c.created_date}</td>
+                        </tr>
+                    `).join('');
+                });
+        }
+
+        function showAddModal() {
+            document.getElementById('addModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('addModal').style.display = 'none';
+        }
+
+        function addCustomer(e) {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('customer_name').value,
+                phone: document.getElementById('customer_phone').value,
+                address: document.getElementById('customer_address').value
+            };
+
+            fetch('/api/customers', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    Utils.showToast('Mijoz qo\'shildi!', 'success');
+                    closeModal();
+                    loadCustomers();
+                    e.target.reset();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

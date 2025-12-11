@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Manager - Admin</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body::before, body::after { display: none !important; }
+        .theme-manager {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 30px;
+        }
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .theme-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s;
+            border: 3px solid transparent;
+        }
+        .theme-card:hover {
+            transform: translateY(-5px);
+        }
+        .theme-card.active {
+            border-color: #3498db;
+        }
+        .theme-preview {
+            height: 150px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+        .ordinary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .newyear { background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%); }
+        .navruz { background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%); }
+        .eid { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); }
+        .search-box {
+            margin: 20px 0;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-manager">
+        <h1>🎨 Sayt Dizayni Boshqaruvi</h1>
+        <p style="text-align:center; color:#7f8c8d; margin-bottom:30px;">Barcha skladlar uchun global tema</p>
+        
+        <div style="text-align:center; margin:20px 0; padding:20px; background:#f8f9fa; border-radius:10px;">
+            <h3>Joriy tema: <strong id="current-theme" style="color:#3498db;">Yuklanmoqda...</strong></h3>
+        </div>
+
+        <div style="margin:30px 0; padding:25px; background:white; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.1);">
+            <h3>🖼️ Orqa Fon Rasmi</h3>
+            <p style="color:#7f8c8d; margin-bottom:20px;">Barcha temalar uchun orqa fon rasmini yuklang</p>
+            <div style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
+                <input type="file" id="bg-upload" accept="image/*" style="flex:1; min-width:200px;">
+                <button onclick="uploadBackground()" class="btn-primary">📤 Yuklash</button>
+                <button onclick="removeBackground()" class="btn-secondary">🗑️ Oq fonga qaytarish</button>
+            </div>
+            <div id="bg-preview" style="margin-top:20px; display:none;">
+                <img id="bg-img" style="max-width:100%; max-height:200px; border-radius:10px; box-shadow:0 3px 10px rgba(0,0,0,0.2);">
+            </div>
+        </div>
+
+        <div class="theme-grid">
+            <div class="theme-card" onclick="setTheme('ordinary')">
+                <div class="theme-preview ordinary">🏢</div>
+                <h3>Oddiy Stil</h3>
+                <p>Standart professional dizayn</p>
+            </div>
+
+            <div class="theme-card" onclick="setTheme('newyear')">
+                <div class="theme-preview newyear">🎄</div>
+                <h3>Yangi Yil</h3>
+                <p>Qor va bayram atmosferasi</p>
+            </div>
+
+            <div class="theme-card" onclick="setTheme('navruz')">
+                <div class="theme-preview navruz">🌸</div>
+                <h3>Navruz</h3>
+                <p>Bahor va yangilanish</p>
+            </div>
+
+            <div class="theme-card" onclick="setTheme('eid')">
+                <div class="theme-preview eid">🌙</div>
+                <h3>Ramazon Hayit</h3>
+                <p>Islomiy bayram dizayni</p>
+            </div>
+        </div>
+
+        <div style="margin-top:30px; text-align:center;">
+            <a href="/admin" class="btn-secondary">⬅️ Admin Panelga Qaytish</a>
+        </div>
+    </div>
+
+    <script src="/static/js/utils.js"></script>
+    <script>
+        const themeNames = {
+            ordinary: 'Oddiy Stil',
+            newyear: 'Yangi Yil',
+            navruz: 'Navruz',
+            eid: 'Ramazon Hayit'
+        };
+
+        // Load current theme on page load
+        loadCurrentTheme();
+        loadBackground();
+
+        function loadCurrentTheme() {
+            fetch('/api/theme')
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('current-theme').textContent = themeNames[data.theme];
+                    document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('active'));
+                    const cards = document.querySelectorAll('.theme-card');
+                    const themeOrder = ['ordinary', 'newyear', 'navruz', 'eid'];
+                    const index = themeOrder.indexOf(data.theme);
+                    if (index >= 0 && cards[index]) {
+                        cards[index].classList.add('active');
+                    }
+                });
+        }
+
+        function setTheme(theme) {
+            fetch('/api/theme', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ theme: theme })
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    Utils.showToast('Tema barcha skladlar uchun o\'zgartirildi!', 'success');
+                    document.getElementById('current-theme').textContent = themeNames[theme];
+                    document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('active'));
+                    event.currentTarget.classList.add('active');
+                }
+            });
+        }
+
+        function loadBackground() {
+            fetch('/api/background')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.background) {
+                        document.getElementById('bg-preview').style.display = 'block';
+                        document.getElementById('bg-img').src = data.background;
+                    }
+                });
+        }
+
+        function uploadBackground() {
+            const file = document.getElementById('bg-upload').files[0];
+            if (!file) {
+                Utils.showToast('Rasm tanlang!', 'error');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('background', file);
+            fetch('/api/background', {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    Utils.showToast('Orqa fon o\'zgartirildi!', 'success');
+                    loadBackground();
+                }
+            });
+        }
+
+        function removeBackground() {
+            if (confirm('Orqa fonni olib tashlaysizmi?')) {
+                fetch('/api/background', { method: 'DELETE' })
+                    .then(r => r.json())
+                    .then(result => {
+                        if (result.success) {
+                            Utils.showToast('Oq fonga qaytarildi!', 'success');
+                            document.getElementById('bg-preview').style.display = 'none';
+                            document.getElementById('bg-upload').value = '';
+                        }
+                    });
+            }
+        }
+    </script>
+</body>
+</html>

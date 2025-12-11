@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirish - Erax Sklad</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1>Erax Sklad</h1>
+            <div class="lang-switch">
+                <button onclick="setLang('uz')" id="btn-uz">O'zbek</button>
+                <button onclick="setLang('ru')" id="btn-ru">Русский</button>
+            </div>
+            
+            <div class="login-form">
+                <h2 data-uz="Tizimga kirish" data-ru="Вход в систему">Tizimga kirish</h2>
+                <input type="text" id="warehouse-id-input" placeholder="Sklad ID" data-uz-placeholder="Sklad ID" data-ru-placeholder="ID склада">
+                <input type="text" id="username-login" placeholder="Ismingiz" data-uz-placeholder="Ismingiz" data-ru-placeholder="Ваше имя">
+                <button onclick="login()" data-uz="Kirish" data-ru="Войти">Kirish</button>
+                
+                <div style="margin-top:20px; text-align:center;">
+                    <a href="/register" style="color:#007bff; text-decoration:none;" data-uz="Ro'yxatdan o'tish" data-ru="Регистрация">Ro'yxatdan o'tish</a>
+                    <span style="margin:0 10px;">|</span>
+                    <a href="javascript:void(0)" onclick="openTelegramBot()" style="color:#007bff; text-decoration:none;" data-uz="ID ni unutdingizmi?" data-ru="Забыли ID?">ID ni unutdingizmi?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+    <script>
+        // Hide loader on login page
+        document.body.classList.add('loaded');
+    </script>
+</body>
+</html>
